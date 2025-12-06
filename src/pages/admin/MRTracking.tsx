@@ -1,0 +1,206 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Search, Download, MapPin, Calendar, Filter } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { VisitMapModal } from '@/components/admin/VisitMapModal';
+
+const mrData = [
+  { id: '1', name: 'Rahul Kumar', territory: 'North Delhi', status: 'Working', visits: 8, firstPunch: '9:00 AM', lastPunch: '5:30 PM' },
+  { id: '2', name: 'Priya Sharma', territory: 'South Delhi', status: 'Working', visits: 6, firstPunch: '9:15 AM', lastPunch: '4:45 PM' },
+  { id: '3', name: 'Amit Rajan', territory: 'West Delhi', status: 'Leave', visits: 0, firstPunch: '-', lastPunch: '-' },
+  { id: '4', name: 'Sneha Mishra', territory: 'East Delhi', status: 'Working', visits: 7, firstPunch: '8:45 AM', lastPunch: '5:00 PM' },
+  { id: '5', name: 'Vikram Thakur', territory: 'Central Delhi', status: 'Working', visits: 5, firstPunch: '9:30 AM', lastPunch: '4:30 PM' },
+  { id: '6', name: 'Neha Gupta', territory: 'Gurgaon', status: 'Off', visits: 0, firstPunch: '-', lastPunch: '-' },
+];
+
+const visitLogs = [
+  { id: 1, time: '2:30 PM', mr: 'Rahul Kumar', doctor: 'Dr. Sharma', notes: 'Discussed new cardiac medicine', lat: 28.6139, lng: 77.2090 },
+  { id: 2, time: '2:15 PM', mr: 'Priya Sharma', doctor: 'Dr. Patel', notes: 'Sample delivered', lat: 28.5355, lng: 77.2520 },
+  { id: 3, time: '1:45 PM', mr: 'Rahul Kumar', doctor: 'Dr. Mehta', notes: 'Follow-up visit', lat: 28.6280, lng: 77.2169 },
+  { id: 4, time: '1:30 PM', mr: 'Sneha Mishra', doctor: 'Dr. Singh', notes: 'New product demo', lat: 28.6692, lng: 77.4538 },
+];
+
+export default function MRTracking() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTerritory, setSelectedTerritory] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedVisit, setSelectedVisit] = useState<typeof visitLogs[0] | null>(null);
+
+  const filteredMRs = mrData.filter(mr => {
+    const matchesSearch = mr.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTerritory = selectedTerritory === 'all' || mr.territory === selectedTerritory;
+    const matchesStatus = selectedStatus === 'all' || mr.status === selectedStatus;
+    return matchesSearch && matchesTerritory && matchesStatus;
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Working': return 'bg-secondary/10 text-secondary';
+      case 'Leave': return 'bg-yellow-500/10 text-yellow-600';
+      case 'Off': return 'bg-muted text-muted-foreground';
+      default: return 'bg-muted text-muted-foreground';
+    }
+  };
+
+  return (
+    <AdminLayout>
+      <div className="space-y-6">
+        {/* Filters */}
+        <div className="pharma-card p-4 lg:p-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search MRs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Select value={selectedTerritory} onValueChange={setSelectedTerritory}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="Territory" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Territories</SelectItem>
+                  <SelectItem value="North Delhi">North Delhi</SelectItem>
+                  <SelectItem value="South Delhi">South Delhi</SelectItem>
+                  <SelectItem value="East Delhi">East Delhi</SelectItem>
+                  <SelectItem value="West Delhi">West Delhi</SelectItem>
+                  <SelectItem value="Central Delhi">Central Delhi</SelectItem>
+                  <SelectItem value="Gurgaon">Gurgaon</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="Working">Working</SelectItem>
+                  <SelectItem value="Leave">Leave</SelectItem>
+                  <SelectItem value="Off">Off</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline">
+                <Calendar className="w-4 h-4 mr-2" />
+                Today
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* MR Table */}
+        <div className="pharma-card overflow-hidden">
+          <div className="p-4 lg:p-6 border-b border-border flex items-center justify-between">
+            <h3 className="font-semibold text-foreground">MR Attendance Overview</h3>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="w-4 h-4 mr-2" />
+                Export Excel
+              </Button>
+              <Button variant="outline" size="sm">
+                <Download className="w-4 h-4 mr-2" />
+                Export PDF
+              </Button>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>MR Name</TableHead>
+                  <TableHead>Territory</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-center">Visits</TableHead>
+                  <TableHead>First Punch</TableHead>
+                  <TableHead>Last Punch</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredMRs.map((mr) => (
+                  <TableRow key={mr.id}>
+                    <TableCell>
+                      <Link 
+                        to={`/admin/mr/${mr.id}`}
+                        className="font-medium text-foreground hover:text-primary transition-colors"
+                      >
+                        {mr.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{mr.territory}</TableCell>
+                    <TableCell>
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(mr.status)}`}>
+                        {mr.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center font-medium">{mr.visits}</TableCell>
+                    <TableCell className="text-muted-foreground">{mr.firstPunch}</TableCell>
+                    <TableCell className="text-muted-foreground">{mr.lastPunch}</TableCell>
+                    <TableCell className="text-right">
+                      <Link to={`/admin/mr/${mr.id}`}>
+                        <Button variant="ghost" size="sm">View Details</Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
+        {/* Visit Logs */}
+        <div className="pharma-card overflow-hidden">
+          <div className="p-4 lg:p-6 border-b border-border">
+            <h3 className="font-semibold text-foreground">Recent Visit Logs</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Time</TableHead>
+                  <TableHead>MR</TableHead>
+                  <TableHead>Doctor Visited</TableHead>
+                  <TableHead>Notes</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {visitLogs.map((visit) => (
+                  <TableRow key={visit.id}>
+                    <TableCell className="font-medium">{visit.time}</TableCell>
+                    <TableCell>{visit.mr}</TableCell>
+                    <TableCell>{visit.doctor}</TableCell>
+                    <TableCell className="text-muted-foreground max-w-xs truncate">{visit.notes}</TableCell>
+                    <TableCell className="text-right">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => setSelectedVisit(visit)}
+                      >
+                        <MapPin className="w-4 h-4 mr-1" />
+                        View on Map
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+
+      {/* Map Modal */}
+      <VisitMapModal 
+        visit={selectedVisit}
+        onClose={() => setSelectedVisit(null)}
+      />
+    </AdminLayout>
+  );
+}
