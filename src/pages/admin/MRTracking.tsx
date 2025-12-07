@@ -4,9 +4,10 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Download, MapPin, Calendar, Filter } from 'lucide-react';
+import { Search, Download, MapPin, Calendar, Plus, CheckCircle2, Clock } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { VisitMapModal } from '@/components/admin/VisitMapModal';
+import { AssignTaskModal, AssignedTask } from '@/components/admin/AssignTaskModal';
 
 const mrData = [
   { id: '1', name: 'Rahul Kumar', territory: 'North Delhi', status: 'Working', visits: 8, firstPunch: '9:00 AM', lastPunch: '5:30 PM' },
@@ -24,11 +25,44 @@ const visitLogs = [
   { id: 4, time: '1:30 PM', mr: 'Sneha Mishra', doctor: 'Dr. Singh', notes: 'New product demo', lat: 28.6692, lng: 77.4538 },
 ];
 
+// Initial assigned tasks mock data
+const initialAssignedTasks: AssignedTask[] = [
+  { 
+    id: 'task-1', 
+    mrId: '1',
+    mrName: 'Rahul Kumar',
+    doctorName: 'Dr. Kapoor', 
+    doctorSpecialty: 'Cardiologist',
+    date: new Date().toISOString().split('T')[0],
+    time: '10:30',
+    notes: 'Discuss new cardiac medication samples',
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  },
+  { 
+    id: 'task-2', 
+    mrId: '1',
+    mrName: 'Rahul Kumar',
+    doctorName: 'Dr. Reddy', 
+    doctorSpecialty: 'General Physician',
+    date: new Date().toISOString().split('T')[0],
+    time: '14:00',
+    status: 'completed',
+    createdAt: new Date().toISOString()
+  },
+];
+
 export default function MRTracking() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTerritory, setSelectedTerritory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedVisit, setSelectedVisit] = useState<typeof visitLogs[0] | null>(null);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [assignedTasks, setAssignedTasks] = useState<AssignedTask[]>(initialAssignedTasks);
+
+  const handleTaskAssigned = (task: AssignedTask) => {
+    setAssignedTasks(prev => [task, ...prev]);
+  };
 
   const filteredMRs = mrData.filter(mr => {
     const matchesSearch = mr.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -90,6 +124,10 @@ export default function MRTracking() {
               <Button variant="outline">
                 <Calendar className="w-4 h-4 mr-2" />
                 Today
+              </Button>
+              <Button onClick={() => setIsAssignModalOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Assign Task
               </Button>
             </div>
           </div>
@@ -194,12 +232,82 @@ export default function MRTracking() {
             </Table>
           </div>
         </div>
+
+        {/* Assigned Tasks Section */}
+        <div className="pharma-card overflow-hidden">
+          <div className="p-4 lg:p-6 border-b border-border flex items-center justify-between">
+            <h3 className="font-semibold text-foreground">Assigned Tasks</h3>
+            <span className="text-sm text-muted-foreground">
+              {assignedTasks.filter(t => t.status === 'pending').length} pending
+            </span>
+          </div>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>MR</TableHead>
+                  <TableHead>Doctor</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Notes</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {assignedTasks.map((task) => (
+                  <TableRow key={task.id}>
+                    <TableCell className="font-medium">{task.mrName}</TableCell>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">{task.doctorName}</span>
+                        <p className="text-xs text-muted-foreground">{task.doctorSpecialty}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {new Date(task.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    </TableCell>
+                    <TableCell>
+                      {task.time ? (
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {task.time}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">Flexible</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        task.status === 'completed' 
+                          ? 'bg-secondary/10 text-secondary' 
+                          : 'bg-yellow-500/10 text-yellow-600'
+                      }`}>
+                        {task.status === 'completed' && <CheckCircle2 className="w-3 h-3" />}
+                        {task.status === 'completed' ? 'Completed' : 'Pending'}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground max-w-xs truncate">
+                      {task.notes || '-'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
 
       {/* Map Modal */}
       <VisitMapModal 
         visit={selectedVisit}
         onClose={() => setSelectedVisit(null)}
+      />
+
+      {/* Assign Task Modal */}
+      <AssignTaskModal
+        open={isAssignModalOpen}
+        onClose={() => setIsAssignModalOpen(false)}
+        onTaskAssigned={handleTaskAssigned}
       />
     </AdminLayout>
   );
