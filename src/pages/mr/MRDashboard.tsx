@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PunchVisitModal } from '@/components/mr/PunchVisitModal';
+import { AssignedTasksSection, AssignedTask } from '@/components/mr/AssignedTasksSection';
 
 // Mock data
 const todaysVisits = [
@@ -24,11 +25,57 @@ const todaysVisits = [
 
 const lastVisit = { doctorName: 'Dr. Mehta', time: '1:30 PM' };
 
+// Mock assigned tasks
+const initialAssignedTasks: AssignedTask[] = [
+  { 
+    id: 'task-1', 
+    doctorName: 'Dr. Kapoor', 
+    doctorSpecialty: 'Cardiologist',
+    date: new Date().toISOString().split('T')[0],
+    time: '10:30',
+    notes: 'Discuss new cardiac medication samples',
+    status: 'pending'
+  },
+  { 
+    id: 'task-2', 
+    doctorName: 'Dr. Reddy', 
+    doctorSpecialty: 'General Physician',
+    date: new Date().toISOString().split('T')[0],
+    time: '14:00',
+    status: 'pending'
+  },
+  { 
+    id: 'task-3', 
+    doctorName: 'Dr. Joshi', 
+    doctorSpecialty: 'Orthopedic',
+    date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    time: '11:00',
+    notes: 'Product demo for joint supplements',
+    status: 'pending'
+  },
+  { 
+    id: 'task-4', 
+    doctorName: 'Dr. Nair', 
+    doctorSpecialty: 'Neurologist',
+    date: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+    status: 'pending'
+  },
+];
+
 export default function MRDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isPunchModalOpen, setIsPunchModalOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+  const [assignedTasks, setAssignedTasks] = useState<AssignedTask[]>(initialAssignedTasks);
+
+  const handleMarkTaskComplete = (taskId: string) => {
+    setAssignedTasks(prev => 
+      prev.map(task => 
+        task.id === taskId ? { ...task, status: 'completed' } : task
+      )
+    );
+  };
 
   const currentDate = new Date().toLocaleDateString('en-IN', {
     weekday: 'long',
@@ -141,6 +188,14 @@ export default function MRDashboard() {
               </span>
             </div>
           )}
+        </div>
+
+        {/* Assigned Tasks Section */}
+        <div className="mb-6">
+          <AssignedTasksSection 
+            tasks={assignedTasks} 
+            onMarkComplete={handleMarkTaskComplete} 
+          />
         </div>
 
         {/* Today's Visits */}
