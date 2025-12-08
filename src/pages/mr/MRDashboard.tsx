@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   MapPin, 
@@ -10,10 +10,13 @@ import {
   LogOut,
   Calendar,
   ChevronRight,
-  User
+  User,
+  Store
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PunchVisitModal } from '@/components/mr/PunchVisitModal';
+import { MedicalShopVisitModal, MedicalShopVisit } from '@/components/mr/MedicalShopVisitModal';
+import { MedicalShopVisitsSection } from '@/components/mr/MedicalShopVisitsSection';
 import { AssignedTasksSection, AssignedTask } from '@/components/mr/AssignedTasksSection';
 
 // Mock data
@@ -62,12 +65,27 @@ const initialAssignedTasks: AssignedTask[] = [
   },
 ];
 
+// Initial mock medical shop visits
+const initialShopVisits: MedicalShopVisit[] = [
+  {
+    id: 'shop-1',
+    shopName: 'MedPlus Pharmacy',
+    location: 'Sector 18, Noida',
+    notes: 'Discussed new product range',
+    contactPerson: 'Ramesh Kumar',
+    time: '10:15 AM',
+    date: new Date().toISOString().split('T')[0],
+  },
+];
+
 export default function MRDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isPunchModalOpen, setIsPunchModalOpen] = useState(false);
+  const [isShopModalOpen, setIsShopModalOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [assignedTasks, setAssignedTasks] = useState<AssignedTask[]>(initialAssignedTasks);
+  const [shopVisits, setShopVisits] = useState<MedicalShopVisit[]>(initialShopVisits);
 
   const handleMarkTaskComplete = (taskId: string) => {
     setAssignedTasks(prev => 
@@ -75,6 +93,10 @@ export default function MRDashboard() {
         task.id === taskId ? { ...task, status: 'completed' } : task
       )
     );
+  };
+
+  const handleShopVisitSave = (visit: MedicalShopVisit) => {
+    setShopVisits(prev => [visit, ...prev]);
   };
 
   const currentDate = new Date().toLocaleDateString('en-IN', {
@@ -163,82 +185,112 @@ export default function MRDashboard() {
           </div>
         </div>
 
-        {/* Punch Visit Card */}
-        <div 
-          onClick={() => setIsPunchModalOpen(true)}
-          className="pharma-card p-6 mb-6 cursor-pointer group hover:border-primary/30 transition-all"
-        >
-          <div className="bg-gradient-to-r from-primary to-secondary rounded-xl p-6 text-center shadow-pharma-lg group-hover:shadow-pharma-xl transition-shadow">
-            <div className="relative mx-auto mb-4">
-              <div className="w-20 h-20 bg-primary-foreground/20 rounded-full flex items-center justify-center mx-auto">
-                <MapPin className="w-10 h-10 text-primary-foreground" />
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          {/* Punch Doctor Visit Card */}
+          <div 
+            onClick={() => setIsPunchModalOpen(true)}
+            className="pharma-card p-3 sm:p-4 cursor-pointer group hover:border-primary/30 transition-all"
+          >
+            <div className="bg-gradient-to-r from-primary to-secondary rounded-xl p-4 sm:p-5 text-center shadow-pharma-lg group-hover:shadow-pharma-xl transition-shadow">
+              <div className="relative mx-auto mb-2 sm:mb-3">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary-foreground/20 rounded-full flex items-center justify-center mx-auto">
+                  <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-primary-foreground" />
+                </div>
               </div>
-              <div className="absolute -inset-2 rounded-full border-2 border-primary-foreground/30 animate-pulse-ring" />
+              <h2 className="text-sm sm:text-base font-bold text-primary-foreground mb-0.5">Doctor Visit</h2>
+              <p className="text-primary-foreground/70 text-xs hidden sm:block">With GPS</p>
             </div>
-            <h2 className="text-xl font-bold text-primary-foreground mb-1">Punch Visit Now</h2>
-            <p className="text-primary-foreground/70 text-sm">Tap to record your visit</p>
           </div>
-          
-          {/* Last visit info */}
-          {lastVisit && (
-            <div className="mt-4 flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Last visit:</span>
+
+          {/* Medical Shop Visit Card */}
+          <div 
+            onClick={() => setIsShopModalOpen(true)}
+            className="pharma-card p-3 sm:p-4 cursor-pointer group hover:border-secondary/30 transition-all"
+          >
+            <div className="bg-gradient-to-r from-pharma-blue to-primary rounded-xl p-4 sm:p-5 text-center shadow-pharma-lg group-hover:shadow-pharma-xl transition-shadow">
+              <div className="relative mx-auto mb-2 sm:mb-3">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary-foreground/20 rounded-full flex items-center justify-center mx-auto">
+                  <Store className="w-6 h-6 sm:w-8 sm:h-8 text-primary-foreground" />
+                </div>
+              </div>
+              <h2 className="text-sm sm:text-base font-bold text-primary-foreground mb-0.5">Shop Visit</h2>
+              <p className="text-primary-foreground/70 text-xs hidden sm:block">No GPS</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Last visit info */}
+        {lastVisit && (
+          <div className="pharma-card p-3 sm:p-4 mb-4 sm:mb-6">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <span className="text-muted-foreground">Last doctor visit:</span>
               <span className="font-medium text-foreground">
                 {lastVisit.doctorName} at {lastVisit.time}
               </span>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Assigned Tasks Section */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <AssignedTasksSection 
             tasks={assignedTasks} 
             onMarkComplete={handleMarkTaskComplete} 
           />
         </div>
 
-        {/* Today's Visits */}
-        <div className="pharma-card p-6">
+        {/* Today's Doctor Visits */}
+        <div className="pharma-card p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-foreground">Today's Visits</h3>
-            <span className="text-sm text-primary font-medium">{todaysVisits.length} visits</span>
+            <h3 className="font-semibold text-foreground text-sm sm:text-base">Today's Doctor Visits</h3>
+            <span className="text-xs sm:text-sm text-primary font-medium">{todaysVisits.length} visits</span>
           </div>
 
           {todaysVisits.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
-                <MapPin className="w-8 h-8 text-muted-foreground" />
+            <div className="text-center py-6 sm:py-8">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
+                <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
               </div>
-              <p className="text-muted-foreground">No visits recorded today</p>
-              <p className="text-sm text-muted-foreground mt-1">Tap above to punch your first visit</p>
+              <p className="text-muted-foreground text-sm">No visits recorded today</p>
+              <p className="text-xs text-muted-foreground mt-1">Tap above to punch your first visit</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {todaysVisits.map((visit) => (
                 <div 
                   key={visit.id}
-                  className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  className="flex items-center gap-3 sm:gap-4 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
-                    <CheckCircle2 className="w-5 h-5 text-secondary" />
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-foreground">{visit.doctorName}</h4>
-                    <p className="text-sm text-muted-foreground">{visit.time}</p>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-foreground text-sm sm:text-base truncate">{visit.doctorName}</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{visit.time}</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        {/* Medical Shop Visits */}
+        <MedicalShopVisitsSection visits={shopVisits.filter(v => v.date === new Date().toISOString().split('T')[0])} />
       </main>
 
       {/* Punch Visit Modal */}
       <PunchVisitModal 
         open={isPunchModalOpen} 
         onClose={() => setIsPunchModalOpen(false)} 
+      />
+
+      {/* Medical Shop Visit Modal */}
+      <MedicalShopVisitModal
+        open={isShopModalOpen}
+        onClose={() => setIsShopModalOpen(false)}
+        onSave={handleShopVisitSave}
       />
     </div>
   );

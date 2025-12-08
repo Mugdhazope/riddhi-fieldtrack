@@ -111,14 +111,17 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+      <DialogContent className="w-[95vw] max-w-md p-0 overflow-hidden">
         {modalState === 'form' && (
           <>
-            <DialogHeader className="p-6 pb-0">
-              <DialogTitle className="text-xl">Punch Visit</DialogTitle>
+            <DialogHeader className="p-4 sm:p-6 pb-0">
+              <DialogTitle className="text-lg sm:text-xl flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-primary" />
+                Punch Doctor Visit
+              </DialogTitle>
             </DialogHeader>
             
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* GPS Status */}
               <div className="p-4 rounded-lg border border-border bg-muted/30">
                 <div className="flex items-center gap-3">
@@ -191,13 +194,13 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3">
-                <Button variant="outline" className="flex-1" onClick={handleClose}>
+              <div className="flex gap-3 pt-2">
+                <Button variant="outline" className="flex-1 h-11" onClick={handleClose}>
                   Cancel
                 </Button>
                 <Button 
                   variant="hero" 
-                  className="flex-1"
+                  className="flex-1 h-11"
                   disabled={gpsStatus !== 'acquired'}
                   onClick={handleSaveVisit}
                 >
@@ -210,14 +213,14 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
         )}
 
         {modalState === 'success' && successData && (
-          <div className="p-8 text-center">
-            <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-12 h-12 text-secondary" />
+          <div className="p-6 sm:p-8 text-center">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+              <CheckCircle2 className="w-10 sm:w-12 h-10 sm:h-12 text-secondary" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Visit Saved Successfully!</h2>
-            <p className="text-muted-foreground mb-4">{successData.doctorName}</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Visit Saved Successfully!</h2>
+            <p className="text-muted-foreground mb-2">{successData.doctorName}</p>
             <p className="text-sm text-muted-foreground">{successData.time}</p>
-            <Button variant="outline" className="mt-6" onClick={handleClose}>
+            <Button variant="outline" className="mt-4 sm:mt-6" onClick={handleClose}>
               Close
             </Button>
           </div>
@@ -225,17 +228,18 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
 
         {modalState === 'add-doctor' && (
           <>
-            <DialogHeader className="p-6 pb-0">
-              <DialogTitle className="text-xl">Add New Doctor</DialogTitle>
+            <DialogHeader className="p-4 sm:p-6 pb-0">
+              <DialogTitle className="text-lg sm:text-xl">Add New Doctor</DialogTitle>
             </DialogHeader>
             
-            <div className="p-6 space-y-4">
+            <div className="p-4 sm:p-6 space-y-4">
               <div className="space-y-2">
                 <Label>Doctor Name</Label>
                 <Input
                   placeholder="Enter doctor's name"
                   value={newDoctor.name}
                   onChange={(e) => setNewDoctor({ ...newDoctor, name: e.target.value })}
+                  className="h-11"
                 />
               </div>
               <div className="space-y-2">
@@ -244,13 +248,14 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
                   placeholder="Enter specialty"
                   value={newDoctor.specialty}
                   onChange={(e) => setNewDoctor({ ...newDoctor, specialty: e.target.value })}
+                  className="h-11"
                 />
               </div>
-              <div className="flex gap-3 pt-4">
-                <Button variant="outline" className="flex-1" onClick={() => setModalState('form')}>
+              <div className="flex gap-3 pt-2">
+                <Button variant="outline" className="flex-1 h-11" onClick={() => setModalState('form')}>
                   Cancel
                 </Button>
-                <Button variant="hero" className="flex-1" onClick={handleAddDoctor}>
+                <Button variant="hero" className="flex-1 h-11" onClick={handleAddDoctor}>
                   Add Doctor
                 </Button>
               </div>
