@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -100,6 +100,9 @@ export function MedicalShopVisitModal({ open, onClose, onSave }: MedicalShopVisi
                 <Store className="w-5 h-5 text-primary" />
                 Log Medical Shop Visit
               </DialogTitle>
+              <DialogDescription className="sr-only">
+                Enter medical shop details to log your visit
+              </DialogDescription>
             </DialogHeader>
             
             <div className="p-4 sm:p-6 space-y-4">
@@ -179,7 +182,9 @@ export function MedicalShopVisitModal({ open, onClose, onSave }: MedicalShopVisi
         )}
 
         {modalState === 'success' && successData && (
-          <div className="p-6 sm:p-8 text-center">
+          <div className="p-6 sm:p-8 text-center" aria-describedby={undefined}>
+            <DialogTitle className="sr-only">Visit Saved Successfully</DialogTitle>
+            <DialogDescription className="sr-only">Your shop visit has been logged</DialogDescription>
             <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4 sm:mb-6">
               <CheckCircle2 className="w-10 sm:w-12 h-10 sm:h-12 text-secondary" />
             </div>
