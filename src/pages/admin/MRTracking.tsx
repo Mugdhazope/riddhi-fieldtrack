@@ -4,10 +4,11 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Download, MapPin, Calendar, Plus, CheckCircle2, Clock } from 'lucide-react';
+import { Search, Download, MapPin, Calendar, Plus, CheckCircle2, Clock, Store } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { VisitMapModal } from '@/components/admin/VisitMapModal';
 import { AssignTaskModal, AssignedTask } from '@/components/admin/AssignTaskModal';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const mrData = [
   { id: '1', name: 'Rahul Kumar', territory: 'North Delhi', status: 'Working', visits: 8, firstPunch: '9:00 AM', lastPunch: '5:30 PM' },
@@ -19,10 +20,17 @@ const mrData = [
 ];
 
 const visitLogs = [
-  { id: 1, time: '2:30 PM', mr: 'Rahul Kumar', doctor: 'Dr. Sharma', notes: 'Discussed new cardiac medicine', lat: 28.6139, lng: 77.2090 },
-  { id: 2, time: '2:15 PM', mr: 'Priya Sharma', doctor: 'Dr. Patel', notes: 'Sample delivered', lat: 28.5355, lng: 77.2520 },
-  { id: 3, time: '1:45 PM', mr: 'Rahul Kumar', doctor: 'Dr. Mehta', notes: 'Follow-up visit', lat: 28.6280, lng: 77.2169 },
-  { id: 4, time: '1:30 PM', mr: 'Sneha Mishra', doctor: 'Dr. Singh', notes: 'New product demo', lat: 28.6692, lng: 77.4538 },
+  { id: 1, time: '2:30 PM', mr: 'Rahul Kumar', doctor: 'Dr. Sharma', notes: 'Discussed new cardiac medicine', lat: 28.6139, lng: 77.2090, type: 'doctor' as const },
+  { id: 2, time: '2:15 PM', mr: 'Priya Sharma', doctor: 'Dr. Patel', notes: 'Sample delivered', lat: 28.5355, lng: 77.2520, type: 'doctor' as const },
+  { id: 3, time: '1:45 PM', mr: 'Rahul Kumar', doctor: 'Dr. Mehta', notes: 'Follow-up visit', lat: 28.6280, lng: 77.2169, type: 'doctor' as const },
+  { id: 4, time: '1:30 PM', mr: 'Sneha Mishra', doctor: 'Dr. Singh', notes: 'New product demo', lat: 28.6692, lng: 77.4538, type: 'doctor' as const },
+];
+
+// Mock medical shop visit logs
+const shopVisitLogs = [
+  { id: 1, time: '3:00 PM', mr: 'Rahul Kumar', shopName: 'MedPlus Pharmacy', location: 'Sector 18, Noida', notes: 'Discussed new product range', contactPerson: 'Ramesh Kumar' },
+  { id: 2, time: '1:00 PM', mr: 'Priya Sharma', shopName: 'Apollo Pharmacy', location: 'Connaught Place', notes: 'Stock check', contactPerson: 'Suresh Verma' },
+  { id: 3, time: '11:30 AM', mr: 'Sneha Mishra', shopName: 'Wellness Forever', location: 'Lajpat Nagar', notes: 'Order placed for 50 units', contactPerson: 'Amit Shah' },
 ];
 
 // Initial assigned tasks mock data
@@ -193,44 +201,97 @@ export default function MRTracking() {
           </div>
         </div>
 
-        {/* Visit Logs */}
+        {/* Visit Logs with Tabs */}
         <div className="pharma-card overflow-hidden">
-          <div className="p-4 lg:p-6 border-b border-border">
-            <h3 className="font-semibold text-foreground">Recent Visit Logs</h3>
-          </div>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Time</TableHead>
-                  <TableHead>MR</TableHead>
-                  <TableHead>Doctor Visited</TableHead>
-                  <TableHead>Notes</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {visitLogs.map((visit) => (
-                  <TableRow key={visit.id}>
-                    <TableCell className="font-medium">{visit.time}</TableCell>
-                    <TableCell>{visit.mr}</TableCell>
-                    <TableCell>{visit.doctor}</TableCell>
-                    <TableCell className="text-muted-foreground max-w-xs truncate">{visit.notes}</TableCell>
-                    <TableCell className="text-right">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => setSelectedVisit(visit)}
-                      >
-                        <MapPin className="w-4 h-4 mr-1" />
-                        View on Map
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <Tabs defaultValue="doctor" className="w-full">
+            <div className="p-4 lg:p-6 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <h3 className="font-semibold text-foreground">Recent Visit Logs</h3>
+              <TabsList className="w-full sm:w-auto">
+                <TabsTrigger value="doctor" className="flex-1 sm:flex-none gap-1.5">
+                  <MapPin className="w-4 h-4" />
+                  <span className="hidden sm:inline">Doctor Visits</span>
+                  <span className="sm:hidden">Doctors</span>
+                </TabsTrigger>
+                <TabsTrigger value="shop" className="flex-1 sm:flex-none gap-1.5">
+                  <Store className="w-4 h-4" />
+                  <span className="hidden sm:inline">Shop Visits</span>
+                  <span className="sm:hidden">Shops</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="doctor" className="m-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Time</TableHead>
+                      <TableHead>MR</TableHead>
+                      <TableHead>Doctor Visited</TableHead>
+                      <TableHead className="hidden md:table-cell">Notes</TableHead>
+                      <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {visitLogs.map((visit) => (
+                      <TableRow key={visit.id}>
+                        <TableCell className="font-medium text-xs sm:text-sm">{visit.time}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">{visit.mr}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">{visit.doctor}</TableCell>
+                        <TableCell className="text-muted-foreground max-w-xs truncate hidden md:table-cell text-xs sm:text-sm">{visit.notes}</TableCell>
+                        <TableCell className="text-right">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => setSelectedVisit(visit)}
+                            className="text-xs sm:text-sm"
+                          >
+                            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                            <span className="hidden sm:inline">View on Map</span>
+                            <span className="sm:hidden">Map</span>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="shop" className="m-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Time</TableHead>
+                      <TableHead>MR</TableHead>
+                      <TableHead>Shop Name</TableHead>
+                      <TableHead className="hidden md:table-cell">Location</TableHead>
+                      <TableHead className="hidden lg:table-cell">Contact</TableHead>
+                      <TableHead className="hidden md:table-cell">Notes</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {shopVisitLogs.map((visit) => (
+                      <TableRow key={visit.id}>
+                        <TableCell className="font-medium text-xs sm:text-sm">{visit.time}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">{visit.mr}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">
+                          <div className="flex items-center gap-1.5">
+                            <Store className="w-3 h-3 text-primary flex-shrink-0" />
+                            <span className="truncate">{visit.shopName}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground hidden md:table-cell text-xs sm:text-sm">{visit.location}</TableCell>
+                        <TableCell className="text-muted-foreground hidden lg:table-cell text-xs sm:text-sm">{visit.contactPerson}</TableCell>
+                        <TableCell className="text-muted-foreground max-w-xs truncate hidden md:table-cell text-xs sm:text-sm">{visit.notes}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Assigned Tasks Section */}
