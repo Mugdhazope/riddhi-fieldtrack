@@ -7,10 +7,16 @@ import { HelmetProvider } from 'react-helmet-async';
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import MRDashboard from "./pages/mr/MRDashboard";
+import DailyExpenses from "./pages/mr/DailyExpenses";
+import ApprovalStatus from "./pages/mr/ApprovalStatus";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import MRTracking from "./pages/admin/MRTracking";
 import MRDetail from "./pages/admin/MRDetail";
 import Analytics from "./pages/admin/Analytics";
+import Reports from "./pages/admin/Reports";
+import DoctorMaster from "./pages/admin/DoctorMaster";
+import ProductMaster from "./pages/admin/ProductMaster";
+import DailyApprovals from "./pages/admin/DailyApprovals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,11 +32,16 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/mr/dashboard" element={<MRDashboard />} />
+            <Route path="/mr/expenses" element={<DailyExpenses />} />
+            <Route path="/mr/approvals" element={<ApprovalStatus />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/mr-tracking" element={<MRTracking />} />
             <Route path="/admin/mr/:id" element={<MRDetail />} />
             <Route path="/admin/analytics" element={<Analytics />} />
-            <Route path="/admin/reports" element={<AdminDashboard />} />
+            <Route path="/admin/reports" element={<Reports />} />
+            <Route path="/admin/doctors" element={<DoctorMaster />} />
+            <Route path="/admin/products" element={<ProductMaster />} />
+            <Route path="/admin/approvals" element={<DailyApprovals />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
