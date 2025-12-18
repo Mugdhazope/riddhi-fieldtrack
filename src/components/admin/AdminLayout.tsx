@@ -22,6 +22,9 @@ interface AdminLayoutProps {
 const navItems = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'MR Tracking', href: '/admin/mr-tracking', icon: Users },
+  { label: 'Daily Approvals', href: '/admin/approvals', icon: FileText },
+  { label: 'Doctor Master', href: '/admin/doctors', icon: Users },
+  { label: 'Products', href: '/admin/products', icon: Pill },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Reports', href: '/admin/reports', icon: FileText },
 ];

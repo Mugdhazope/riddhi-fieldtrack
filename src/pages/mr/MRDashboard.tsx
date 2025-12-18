@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   MapPin, 
@@ -11,7 +11,9 @@ import {
   Calendar,
   ChevronRight,
   User,
-  Store
+  Store,
+  IndianRupee,
+  ClipboardCheck
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PunchVisitModal } from '@/components/mr/PunchVisitModal';
@@ -218,6 +220,28 @@ export default function MRDashboard() {
               <p className="text-primary-foreground/70 text-xs hidden sm:block">No GPS</p>
             </div>
           </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <Link to="/mr/expenses" className="pharma-card p-3 flex items-center gap-3 hover:border-primary/30 transition-all">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <IndianRupee className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">Expenses</p>
+              <p className="text-xs text-muted-foreground">Daily entry</p>
+            </div>
+          </Link>
+          <Link to="/mr/approvals" className="pharma-card p-3 flex items-center gap-3 hover:border-secondary/30 transition-all">
+            <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+              <ClipboardCheck className="w-5 h-5 text-secondary" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">Approvals</p>
+              <p className="text-xs text-muted-foreground">View status</p>
+            </div>
+          </Link>
         </div>
 
         {/* Last visit info */}
