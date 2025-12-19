@@ -11,6 +11,9 @@ export interface Doctor {
   phone?: string;
   email?: string;
   createdAt: string;
+  // GPS coordinates for distance calculation
+  lat: number;
+  lng: number;
 }
 
 export interface Product {
@@ -24,11 +27,14 @@ export interface Product {
 export interface MR {
   id: string;
   name: string;
+  username: string;
   email: string;
   phone: string;
   territory: string;
+  hq?: string;
   status: 'active' | 'inactive';
   joinedDate: string;
+  password?: string; // For demo only - in real app this would be hashed
 }
 
 export interface DoctorVisit {
@@ -84,16 +90,18 @@ export interface DailyApproval {
   approvedAt?: string;
 }
 
-// Mock Doctors
+// Mock Doctors with GPS coordinates (Mumbai area)
 export const mockDoctors: Doctor[] = [
-  { id: 'd1', name: 'Dr. Rajesh Sharma', qualification: 'MBBS, MD', specialization: 'Cardiologist', town: 'Mumbai', area: 'Andheri West', createdAt: '2024-01-15' },
-  { id: 'd2', name: 'Dr. Priya Patel', qualification: 'MBBS, DNB', specialization: 'General Physician', town: 'Mumbai', area: 'Bandra', createdAt: '2024-01-20' },
-  { id: 'd3', name: 'Dr. Amit Mehta', qualification: 'MBBS, MD', specialization: 'Pediatrician', town: 'Thane', area: 'Ghodbunder Road', createdAt: '2024-02-01' },
-  { id: 'd4', name: 'Dr. Sunita Singh', qualification: 'MBBS, MS', specialization: 'Orthopedic', town: 'Navi Mumbai', area: 'Vashi', createdAt: '2024-02-10' },
-  { id: 'd5', name: 'Dr. Vikram Gupta', qualification: 'MBBS, MD', specialization: 'Dermatologist', town: 'Mumbai', area: 'Powai', createdAt: '2024-02-15' },
-  { id: 'd6', name: 'Dr. Neha Kapoor', qualification: 'MBBS, DM', specialization: 'Neurologist', town: 'Mumbai', area: 'Goregaon', createdAt: '2024-03-01' },
-  { id: 'd7', name: 'Dr. Arjun Reddy', qualification: 'MBBS, MD', specialization: 'Gastroenterologist', town: 'Thane', area: 'Kalyan', createdAt: '2024-03-10' },
-  { id: 'd8', name: 'Dr. Kavita Joshi', qualification: 'MBBS, MD', specialization: 'Endocrinologist', town: 'Navi Mumbai', area: 'Nerul', createdAt: '2024-03-15' },
+  { id: 'd1', name: 'Dr. Rajesh Sharma', qualification: 'MBBS, MD', specialization: 'Cardiologist', town: 'Mumbai', area: 'Andheri West', createdAt: '2024-01-15', lat: 19.1362, lng: 72.8296 },
+  { id: 'd2', name: 'Dr. Priya Patel', qualification: 'MBBS, DNB', specialization: 'General Physician', town: 'Mumbai', area: 'Bandra', createdAt: '2024-01-20', lat: 19.0596, lng: 72.8295 },
+  { id: 'd3', name: 'Dr. Amit Mehta', qualification: 'MBBS, MD', specialization: 'Pediatrician', town: 'Thane', area: 'Ghodbunder Road', createdAt: '2024-02-01', lat: 19.2183, lng: 72.9781 },
+  { id: 'd4', name: 'Dr. Sunita Singh', qualification: 'MBBS, MS', specialization: 'Orthopedic', town: 'Navi Mumbai', area: 'Vashi', createdAt: '2024-02-10', lat: 19.0771, lng: 72.9987 },
+  { id: 'd5', name: 'Dr. Vikram Gupta', qualification: 'MBBS, MD', specialization: 'Dermatologist', town: 'Mumbai', area: 'Powai', createdAt: '2024-02-15', lat: 19.1176, lng: 72.9060 },
+  { id: 'd6', name: 'Dr. Neha Kapoor', qualification: 'MBBS, DM', specialization: 'Neurologist', town: 'Mumbai', area: 'Goregaon', createdAt: '2024-03-01', lat: 19.1555, lng: 72.8494 },
+  { id: 'd7', name: 'Dr. Arjun Reddy', qualification: 'MBBS, MD', specialization: 'Gastroenterologist', town: 'Thane', area: 'Kalyan', createdAt: '2024-03-10', lat: 19.2437, lng: 73.1355 },
+  { id: 'd8', name: 'Dr. Kavita Joshi', qualification: 'MBBS, MD', specialization: 'Endocrinologist', town: 'Navi Mumbai', area: 'Nerul', createdAt: '2024-03-15', lat: 19.0330, lng: 73.0169 },
+  { id: 'd9', name: 'Dr. Sanjay Deshmukh', qualification: 'MBBS, MS', specialization: 'Surgeon', town: 'Mumbai', area: 'Dadar', createdAt: '2024-03-20', lat: 19.0176, lng: 72.8426 },
+  { id: 'd10', name: 'Dr. Meera Kulkarni', qualification: 'MBBS, MD', specialization: 'Gynecologist', town: 'Mumbai', area: 'Kurla', createdAt: '2024-04-01', lat: 19.0726, lng: 72.8845 },
 ];
 
 // Mock Products
@@ -106,14 +114,16 @@ export const mockProducts: Product[] = [
   { id: 'p6', name: 'Diabetrol', category: 'Diabetes', status: 'active', description: 'Blood sugar management' },
   { id: 'p7', name: 'Immunoboost', category: 'General', status: 'active', description: 'Immunity booster' },
   { id: 'p8', name: 'Calcivit D3', category: 'General', status: 'inactive', description: 'Calcium and Vitamin D3' },
+  { id: 'p9', name: 'Livergard', category: 'Gastro', status: 'active', description: 'Liver protection formula' },
+  { id: 'p10', name: 'Respira Plus', category: 'Respiratory', status: 'active', description: 'Respiratory health' },
 ];
 
 // Mock MRs
 export const mockMRs: MR[] = [
-  { id: 'mr1', name: 'Rahul Kumar', email: 'rahul@riddhi.com', phone: '9876543210', territory: 'Mumbai West', status: 'active', joinedDate: '2023-06-01' },
-  { id: 'mr2', name: 'Sneha Desai', email: 'sneha@riddhi.com', phone: '9876543211', territory: 'Thane', status: 'active', joinedDate: '2023-07-15' },
-  { id: 'mr3', name: 'Vikash Yadav', email: 'vikash@riddhi.com', phone: '9876543212', territory: 'Navi Mumbai', status: 'active', joinedDate: '2023-08-01' },
-  { id: 'mr4', name: 'Pooja Sharma', email: 'pooja@riddhi.com', phone: '9876543213', territory: 'Mumbai East', status: 'active', joinedDate: '2023-09-10' },
+  { id: 'mr1', name: 'Rahul Kumar', username: 'rahul.kumar', email: 'rahul@riddhi.com', phone: '9876543210', territory: 'Mumbai West', hq: 'Andheri', status: 'active', joinedDate: '2023-06-01', password: 'temp123' },
+  { id: 'mr2', name: 'Sneha Desai', username: 'sneha.desai', email: 'sneha@riddhi.com', phone: '9876543211', territory: 'Thane', hq: 'Thane', status: 'active', joinedDate: '2023-07-15', password: 'temp123' },
+  { id: 'mr3', name: 'Vikash Yadav', username: 'vikash.yadav', email: 'vikash@riddhi.com', phone: '9876543212', territory: 'Navi Mumbai', hq: 'Vashi', status: 'active', joinedDate: '2023-08-01', password: 'temp123' },
+  { id: 'mr4', name: 'Pooja Sharma', username: 'pooja.sharma', email: 'pooja@riddhi.com', phone: '9876543213', territory: 'Mumbai East', hq: 'Kurla', status: 'inactive', joinedDate: '2023-09-10', password: 'temp123' },
 ];
 
 // Generate mock visits for the past 30 days
@@ -280,4 +290,95 @@ export const getMRBusinessStats = (): { mrId: string; mrName: string; totalBusin
     visitCount: data.visitCount,
     incentive: Math.floor(data.totalBusiness * 0.05), // 5% incentive
   })).sort((a, b) => b.totalBusiness - a.totalBusiness);
+};
+
+// Calculate distance between two GPS coordinates (Haversine formula)
+export const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+// Get doctors sorted by distance from current location
+export const getDoctorsByDistance = (currentLat: number, currentLng: number): (Doctor & { distance: number })[] => {
+  return mockDoctors.map(doctor => ({
+    ...doctor,
+    distance: calculateDistance(currentLat, currentLng, doctor.lat, doctor.lng),
+  })).sort((a, b) => a.distance - b.distance);
+};
+
+// Get weekly visit count for a doctor
+export const getDoctorWeeklyVisits = (doctorId: string): number => {
+  const today = new Date();
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  
+  return mockVisits.filter(v => 
+    v.doctorId === doctorId && 
+    new Date(v.date) >= weekAgo && 
+    new Date(v.date) <= today
+  ).length;
+};
+
+// Get last visit date for a doctor
+export const getDoctorLastVisit = (doctorId: string): string | null => {
+  const visits = getDoctorVisitHistory(doctorId);
+  return visits.length > 0 ? visits[0].date : null;
+};
+
+// Check if doctor was visited this week
+export const isDoctorVisitedThisWeek = (doctorId: string): boolean => {
+  return getDoctorWeeklyVisits(doctorId) > 0;
+};
+
+// Get product promotion count for different periods
+export const getProductPromotionCounts = (productId: string): { today: number; week: number; month: number } => {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const monthAgo = new Date(today);
+  monthAgo.setDate(monthAgo.getDate() - 30);
+  
+  let todayCount = 0;
+  let weekCount = 0;
+  let monthCount = 0;
+  
+  mockVisits.forEach(visit => {
+    if (visit.productsPromoted.includes(productId)) {
+      const visitDate = new Date(visit.date);
+      if (visit.date === todayStr) todayCount++;
+      if (visitDate >= weekAgo) weekCount++;
+      if (visitDate >= monthAgo) monthCount++;
+    }
+  });
+  
+  return { today: todayCount, week: weekCount, month: monthCount };
+};
+
+// Get MR coverage stats for admin
+export const getMRCoverageStats = (mrId: string): { 
+  doctorsCovered: number; 
+  totalDoctors: number; 
+  productSpread: number; 
+  missedDoctors: string[] 
+} => {
+  const mrVisits = mockVisits.filter(v => v.mrId === mrId);
+  const visitedDoctorIds = new Set(mrVisits.map(v => v.doctorId));
+  const promotedProductIds = new Set(mrVisits.flatMap(v => v.productsPromoted));
+  const missedDoctors = mockDoctors
+    .filter(d => !visitedDoctorIds.has(d.id))
+    .map(d => d.name);
+  
+  return {
+    doctorsCovered: visitedDoctorIds.size,
+    totalDoctors: mockDoctors.length,
+    productSpread: promotedProductIds.size,
+    missedDoctors: missedDoctors.slice(0, 5),
+  };
 };

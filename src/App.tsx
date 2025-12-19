@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import MRDashboard from "./pages/mr/MRDashboard";
 import DailyExpenses from "./pages/mr/DailyExpenses";
 import ApprovalStatus from "./pages/mr/ApprovalStatus";
+import DoctorList from "./pages/mr/DoctorList";
+import ProductList from "./pages/mr/ProductList";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import MRTracking from "./pages/admin/MRTracking";
 import MRDetail from "./pages/admin/MRDetail";
@@ -17,6 +19,7 @@ import Reports from "./pages/admin/Reports";
 import DoctorMaster from "./pages/admin/DoctorMaster";
 import ProductMaster from "./pages/admin/ProductMaster";
 import DailyApprovals from "./pages/admin/DailyApprovals";
+import MRManagement from "./pages/admin/MRManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,12 +34,16 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/mr" element={<MRDashboard />} />
             <Route path="/mr/dashboard" element={<MRDashboard />} />
             <Route path="/mr/expenses" element={<DailyExpenses />} />
             <Route path="/mr/approvals" element={<ApprovalStatus />} />
+            <Route path="/mr/doctors" element={<DoctorList />} />
+            <Route path="/mr/products" element={<ProductList />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/mr-tracking" element={<MRTracking />} />
             <Route path="/admin/mr/:id" element={<MRDetail />} />
+            <Route path="/admin/mr-management" element={<MRManagement />} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/admin/reports" element={<Reports />} />
             <Route path="/admin/doctors" element={<DoctorMaster />} />

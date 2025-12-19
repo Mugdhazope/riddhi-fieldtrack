@@ -224,9 +224,31 @@ export default function MRDashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <Link to="/mr/expenses" className="pharma-card p-3 flex items-center gap-3 hover:border-primary/30 transition-all">
+          <Link to="/mr/doctors" className="pharma-card p-3 flex items-center gap-3 hover:border-primary/30 transition-all">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <IndianRupee className="w-5 h-5 text-primary" />
+              <User className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">Doctors</p>
+              <p className="text-xs text-muted-foreground">By distance</p>
+            </div>
+          </Link>
+          <Link to="/mr/products" className="pharma-card p-3 flex items-center gap-3 hover:border-secondary/30 transition-all">
+            <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+              <Store className="w-5 h-5 text-secondary" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">Products</p>
+              <p className="text-xs text-muted-foreground">Promotions</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* More Actions */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <Link to="/mr/expenses" className="pharma-card p-3 flex items-center gap-3 hover:border-primary/30 transition-all">
+            <div className="w-10 h-10 rounded-lg bg-pharma-blue/10 flex items-center justify-center">
+              <IndianRupee className="w-5 h-5 text-pharma-blue" />
             </div>
             <div>
               <p className="font-medium text-sm">Expenses</p>
@@ -234,8 +256,8 @@ export default function MRDashboard() {
             </div>
           </Link>
           <Link to="/mr/approvals" className="pharma-card p-3 flex items-center gap-3 hover:border-secondary/30 transition-all">
-            <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
-              <ClipboardCheck className="w-5 h-5 text-secondary" />
+            <div className="w-10 h-10 rounded-lg bg-pharma-purple/10 flex items-center justify-center">
+              <ClipboardCheck className="w-5 h-5 text-pharma-purple" />
             </div>
             <div>
               <p className="font-medium text-sm">Approvals</p>
