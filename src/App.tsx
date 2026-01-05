@@ -4,8 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
+import { BrandingProvider } from './contexts/BrandingContext';
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
+import Setup from "./pages/Setup";
 import MRDashboard from "./pages/mr/MRDashboard";
 import DailyExpenses from "./pages/mr/DailyExpenses";
 import ApprovalStatus from "./pages/mr/ApprovalStatus";
@@ -20,40 +22,45 @@ import DoctorMaster from "./pages/admin/DoctorMaster";
 import ProductMaster from "./pages/admin/ProductMaster";
 import DailyApprovals from "./pages/admin/DailyApprovals";
 import MRManagement from "./pages/admin/MRManagement";
+import TaskManagement from "./pages/admin/TaskManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/mr" element={<MRDashboard />} />
-            <Route path="/mr/dashboard" element={<MRDashboard />} />
-            <Route path="/mr/expenses" element={<DailyExpenses />} />
-            <Route path="/mr/approvals" element={<ApprovalStatus />} />
-            <Route path="/mr/doctors" element={<DoctorList />} />
-            <Route path="/mr/products" element={<ProductList />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/mr-tracking" element={<MRTracking />} />
-            <Route path="/admin/mr/:id" element={<MRDetail />} />
-            <Route path="/admin/mr-management" element={<MRManagement />} />
-            <Route path="/admin/analytics" element={<Analytics />} />
-            <Route path="/admin/reports" element={<Reports />} />
-            <Route path="/admin/doctors" element={<DoctorMaster />} />
-            <Route path="/admin/products" element={<ProductMaster />} />
-            <Route path="/admin/approvals" element={<DailyApprovals />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <BrandingProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/setup" element={<Setup />} />
+              <Route path="/mr" element={<MRDashboard />} />
+              <Route path="/mr/dashboard" element={<MRDashboard />} />
+              <Route path="/mr/expenses" element={<DailyExpenses />} />
+              <Route path="/mr/approvals" element={<ApprovalStatus />} />
+              <Route path="/mr/doctors" element={<DoctorList />} />
+              <Route path="/mr/products" element={<ProductList />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/mr-tracking" element={<MRTracking />} />
+              <Route path="/admin/mr/:id" element={<MRDetail />} />
+              <Route path="/admin/mr-management" element={<MRManagement />} />
+              <Route path="/admin/tasks" element={<TaskManagement />} />
+              <Route path="/admin/analytics" element={<Analytics />} />
+              <Route path="/admin/reports" element={<Reports />} />
+              <Route path="/admin/doctors" element={<DoctorMaster />} />
+              <Route path="/admin/products" element={<ProductMaster />} />
+              <Route path="/admin/approvals" element={<DailyApprovals />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </BrandingProvider>
   </HelmetProvider>
 );
 

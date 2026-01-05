@@ -9,7 +9,10 @@ import {
   Menu, 
   X,
   Pill,
-  ChevronDown
+  ClipboardList,
+  UserCog,
+  CheckSquare,
+  Package
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -22,9 +25,11 @@ interface AdminLayoutProps {
 const navItems = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'MR Tracking', href: '/admin/mr-tracking', icon: Users },
-  { label: 'Daily Approvals', href: '/admin/approvals', icon: FileText },
+  { label: 'MR Management', href: '/admin/mr-management', icon: UserCog },
+  { label: 'Task Management', href: '/admin/tasks', icon: ClipboardList },
+  { label: 'Daily Approvals', href: '/admin/approvals', icon: CheckSquare },
   { label: 'Doctor Master', href: '/admin/doctors', icon: Users },
-  { label: 'Products', href: '/admin/products', icon: Pill },
+  { label: 'Products', href: '/admin/products', icon: Package },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Reports', href: '/admin/reports', icon: FileText },
 ];
