@@ -5,22 +5,25 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { MapPin, Loader2, CheckCircle2, X, Plus, Search } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { MapPin, Loader2, CheckCircle2, X, Plus, Search, IndianRupee, Package } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { mockProducts, mockDoctors } from '@/data/mockData';
 
 interface PunchVisitModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-// Mock doctors list
-const doctorsList = [
-  { id: '1', name: 'Dr. Sharma', specialty: 'Cardiologist' },
-  { id: '2', name: 'Dr. Patel', specialty: 'General Physician' },
-  { id: '3', name: 'Dr. Mehta', specialty: 'Pediatrician' },
-  { id: '4', name: 'Dr. Singh', specialty: 'Orthopedic' },
-  { id: '5', name: 'Dr. Gupta', specialty: 'Dermatologist' },
-];
+// Use mock doctors from data
+const doctorsList = mockDoctors.map(d => ({
+  id: d.id,
+  name: d.name,
+  specialty: d.specialization,
+}));
+
+// Use mock products from data
+const productsList = mockProducts.filter(p => p.status === 'active');
 
 type ModalState = 'form' | 'success' | 'add-doctor';
 
@@ -35,6 +38,10 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
   // New doctor form
   const [newDoctor, setNewDoctor] = useState({ name: '', specialty: '' });
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Product promotion tracking
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [businessValue, setBusinessValue] = useState('');
 
   // Simulate GPS acquisition
   useEffect(() => {
@@ -64,7 +71,17 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
     setGpsStatus('acquiring');
     setSuccessData(null);
     setNewDoctor({ name: '', specialty: '' });
+    setSelectedProducts([]);
+    setBusinessValue('');
     onClose();
+  };
+
+  const handleProductToggle = (productId: string) => {
+    setSelectedProducts(prev => 
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
   };
 
   const handleSaveVisit = () => {
@@ -182,6 +199,54 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
                 </Button>
               </div>
 
+              {/* Product Promotion */}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Package className="w-4 h-4" />
+                  Products Promoted
+                </Label>
+                <div className="max-h-32 overflow-y-auto border border-border rounded-lg p-2 space-y-1">
+                  {productsList.map((product) => (
+                    <div
+                      key={product.id}
+                      className="flex items-center gap-2 p-1.5 rounded hover:bg-muted/50"
+                    >
+                      <Checkbox
+                        id={product.id}
+                        checked={selectedProducts.includes(product.id)}
+                        onCheckedChange={() => handleProductToggle(product.id)}
+                      />
+                      <label
+                        htmlFor={product.id}
+                        className="flex-1 text-sm cursor-pointer"
+                      >
+                        {product.name}
+                        <span className="text-xs text-muted-foreground ml-2">({product.category})</span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                {selectedProducts.length > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {selectedProducts.length} product(s) selected
+                  </p>
+                )}
+              </div>
+
+              {/* Business Value */}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <IndianRupee className="w-4 h-4" />
+                  Business Generated (₹)
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="Enter amount (optional)"
+                  value={businessValue}
+                  onChange={(e) => setBusinessValue(e.target.value)}
+                />
+              </div>
+
               {/* Notes */}
               <div className="space-y-2">
                 <Label>Notes (optional)</Label>
@@ -189,7 +254,7 @@ export function PunchVisitModal({ open, onClose }: PunchVisitModalProps) {
                   placeholder="Add any notes about this visit..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
+                  rows={2}
                 />
               </div>
 

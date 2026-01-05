@@ -68,6 +68,7 @@ export default {
           "green-light": "hsl(var(--pharma-green-light))",
           blue: "hsl(var(--pharma-blue))",
           "blue-light": "hsl(var(--pharma-blue-light))",
+          purple: "hsl(var(--pharma-purple))",
         },
       },
       borderRadius: {

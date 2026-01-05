@@ -20,6 +20,7 @@ import { PunchVisitModal } from '@/components/mr/PunchVisitModal';
 import { MedicalShopVisitModal, MedicalShopVisit } from '@/components/mr/MedicalShopVisitModal';
 import { MedicalShopVisitsSection } from '@/components/mr/MedicalShopVisitsSection';
 import { AssignedTasksSection, AssignedTask } from '@/components/mr/AssignedTasksSection';
+import { TodayRouteMap } from '@/components/mr/TodayRouteMap';
 
 // Mock data
 const todaysVisits = [
@@ -320,6 +321,11 @@ export default function MRDashboard() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Today's Route Map */}
+        <div className="mb-4 sm:mb-6">
+          <TodayRouteMap />
         </div>
 
         {/* Medical Shop Visits */}

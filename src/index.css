@@ -44,6 +44,7 @@
     --pharma-green-light: 160 45% 95%;
     --pharma-blue: 210 85% 45%;
     --pharma-blue-light: 210 85% 95%;
+    --pharma-purple: 270 60% 55%;
 
     /* Gradients */
     --gradient-pharma: linear-gradient(135deg, hsl(187 79% 35%) 0%, hsl(160 45% 50%) 100%);
